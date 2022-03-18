@@ -1,4 +1,4 @@
-package com.cos.photogramstart;
+package com.cos.photogram;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
