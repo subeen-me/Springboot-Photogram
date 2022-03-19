@@ -18,12 +18,17 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) //번호 증가 전략을 DB를 따라간다
     private int id;
 
+    @Column(length = 20, unique = true) //회원가입 시 중복 아이디 방지
     private String username;
+    @Column(nullable = false)
     private String password;
-
+    @Column(nullable = false)
     private String name;
+
     private String website; //웹사이트
     private String bio; //자기소개
+
+    @Column(nullable = false)
     private String email;
     private String phone;
     private String gender;
