@@ -42,7 +42,7 @@ public class UserApiController {
         } else {
             User userEntity = userService.userUpdate(id, userUpdateDto.toEntity());
             principalDetails.setUser(userEntity); //세션정보 새로 넣고 저장(변경)
-            return new CMRespDto<>(1, "회원수정완료", userEntity);
+            return new CMRespDto<>(1, "회원수정완료", userEntity); //응답시에 userEntity의 모든 getter함수가 호출되고 json으로 파싱하여 응답한다
         }
 
     }

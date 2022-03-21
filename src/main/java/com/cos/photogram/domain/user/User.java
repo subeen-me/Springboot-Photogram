@@ -1,5 +1,7 @@
 package com.cos.photogram.domain.user;
 
+import com.cos.photogram.domain.Image.Image;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 //JPA - Java Persistence Api (자바로 데이터를 영구적으로 저장(DB)할 수 있는 Api를 제공)
 @Builder //dto에서 빌더패턴을 이용하기 위해 사용. toEntity 메서드
@@ -35,6 +38,15 @@ public class User {
 
     private String profileImageUrl; //사진
     private String role; //권한
+
+    //mappedBy : 연관관계의 주인이 아니다. 테이블에 컬럼을 만들지 않는다.
+    //image클래스의 변수 user를 넣어준다.
+    //User를 Select할 때 해당 User의 id로 등록된 image들을 다 가져온다.
+    //LAZY = User를 select할 때 해당 User의 id로 등록된 image들을 가져오지 않는다. 대신 getImages()함수의 image들이 호출될 때 가져온다.
+    //EAGER = select할 때 관련된 image들을 전부 join해서 가져온다.
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"user"}) // Image 내부에 있는 user를 제외하고 파싱한다. 응답할 때 무한참조 방지
+    private List<Image> images; //양방향 매핑
 
     private LocalDateTime createDate;
 

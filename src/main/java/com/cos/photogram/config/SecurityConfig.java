@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable(); //csrf 토큰 설정 해제. postman으로 들어와도 입력 가능
         http.authorizeRequests()
                 .antMatchers("/","/user/**","/image/**",
-                        "/subscribe/**","/comment/**").authenticated() //이렇게 요청이 오면 인증이 필요하다고 설정
+                        "/subscribe/**","/comment/**", "/api/**").authenticated() //이렇게 요청이 오면 인증이 필요하다고 설정
                 .anyRequest().permitAll() //(위에 것이 아닌 모든 요청)은 허용한다
                 .and() //그리고
                 .formLogin() //인증이 필요한 페이지 요청이 오면 로그인하게 페이지를 이동하는데
