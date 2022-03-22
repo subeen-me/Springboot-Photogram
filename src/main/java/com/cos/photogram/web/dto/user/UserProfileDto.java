@@ -16,4 +16,6 @@ public class UserProfileDto {
     //view 페이지에서 연산하는 걸 막기 위해 필드 생성
     private int imageCount;
     private User user;
+    private boolean subscribeState;
+    private int subscribeCount;
 }
