@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.swing.text.html.parser.Entity;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +28,8 @@ public class SubscribeService {
         //쿼리 준비
         StringBuffer sb = new StringBuffer();
         sb.append("SELECT u.id, u.username, u.profileImageUrl, ");
-        sb.append("if((SELECT 1 FROM subscribe WHERE fromUserId=? AND toUserId=u.id), 1, 0) subscribeState, ");
-        sb.append("if((? = u.id), 1, 0) equalUserState ");
+        sb.append("if ((SELECT 1 FROM subscribe WHERE fromUserId= ? AND toUserId = u.id), 1, 0) subscribeState, ");
+        sb.append("if ((?=u.id), 1, 0) equalUserState ");
         sb.append("FROM user u INNER JOIN subscribe s ");
         sb.append("ON u.id = s.toUserId ");
         sb.append("WHERE s.fromUserId = ?"); //끝에 세미콜론 첨부하면 안된다.
@@ -45,8 +46,12 @@ public class SubscribeService {
                 .setParameter(3, pageUserId);
 
         //쿼리 실행
-        JpaResultMapper result = new JpaResultMapper();
-        List<SubscribeDto> subscribeDtos = result.list(query, SubscribeDto.class);
+        //  JpaResultMapper result = new JpaResultMapper();
+        //  List<SubscribeDto> subscribeDtos = result.list(query, SubscribeDto.class);
+        List<Object[]> results = query.getResultList();
+        List<SubscribeDto> subscribeDtos = results.stream()
+                .map(o -> new SubscribeDto(o))
+                .collect(Collectors.toList());
 
         //구독리스트 리턴
         return subscribeDtos;
