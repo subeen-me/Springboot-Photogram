@@ -6,12 +6,15 @@ import com.cos.photogram.domain.Image.ImageRepository;
 import com.cos.photogram.web.dto.Image.ImageUploadDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +22,12 @@ import java.util.UUID;
 public class ImageService {
 
     private final ImageRepository imageRepository;
+
+    @Transactional(readOnly = true) //영속성 컨텍스트 변경감지를 해서 더티체킹을 하고 flush(반영) 을 readOnly=true로 설정하면 하지 않는다.
+    public Page<Image> imageStory(int principalId, Pageable pageable) {
+        Page<Image> images = imageRepository.mStory(principalId, pageable);
+        return images;
+    }
 
     @Value("${file.path}") //application.yml의 path경로를 가져온다. yml에 내가 만든 키 값도 들고 올 수 있다.
     private String uploadFolder;
