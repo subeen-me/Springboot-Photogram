@@ -1,5 +1,6 @@
 package com.cos.photogram.domain.Image;
 
+import com.cos.photogram.domain.likes.Likes;
 import com.cos.photogram.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder //dto에서 빌더패턴을 이용하기 위해 사용. toEntity 메서드
 @AllArgsConstructor
@@ -29,8 +31,17 @@ public class Image { // N, 1
     private User user; // 1, 1
 
     //이미지 좋아요, 댓글 추후 업데이트
+    @JsonIgnoreProperties({"image"}) //likes가 리턴될 때 image가 리턴되지 않게 하기위해(무한참조 방지)
+    @OneToMany(mappedBy = "image")
+    private List<Likes> likes;
 
     private LocalDateTime createDate; //db에는 항상 시간이 들어가야한다.
+
+    @Transient //DB에 컬럼이 만들어지지 않는다
+    private boolean likeState;
+
+    @Transient
+    private int likeCount;
 
     @PrePersist
     public void createDate() { //LocalDateTime 자동으로 입력

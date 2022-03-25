@@ -26,6 +26,20 @@ public class ImageService {
     @Transactional(readOnly = true) //영속성 컨텍스트 변경감지를 해서 더티체킹을 하고 flush(반영) 을 readOnly=true로 설정하면 하지 않는다.
     public Page<Image> imageStory(int principalId, Pageable pageable) {
         Page<Image> images = imageRepository.mStory(principalId, pageable);
+
+        //images에 좋아요 상태 담기
+        images.forEach((image -> {
+
+            image.setLikeCount(image.getLikes().size());
+
+            image.getLikes().forEach((likes -> {
+                if(likes.getUser().getId() == principalId) { //해당 이미지에 좋아요 한 사람들을 찾아서 현재 로그인한 사람이 좋아요 한것인지 비교
+                    image.setLikeState(true);
+                }
+            }));
+
+        }));
+
         return images;
     }
 
