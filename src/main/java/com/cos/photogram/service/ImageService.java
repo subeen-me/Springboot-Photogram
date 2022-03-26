@@ -23,6 +23,11 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
 
+    @Transactional(readOnly = true)
+    public List<Image> popularFeed() {
+        return imageRepository.mPopular();
+    }
+
     @Transactional(readOnly = true) //영속성 컨텍스트 변경감지를 해서 더티체킹을 하고 flush(반영) 을 readOnly=true로 설정하면 하지 않는다.
     public Page<Image> imageStory(int principalId, Pageable pageable) {
         Page<Image> images = imageRepository.mStory(principalId, pageable);
@@ -67,4 +72,6 @@ public class ImageService {
 
         //System.out.println(imageEntity);
     }
+
+
 }

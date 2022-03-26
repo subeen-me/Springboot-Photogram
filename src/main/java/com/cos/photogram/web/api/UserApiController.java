@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -32,6 +33,14 @@ public class UserApiController {
 
     private final UserService userService;
     private final SubscribeService subscribeService;
+
+    @PutMapping("/api/user/{principalId}/profileImageUrl") //MultipartFile 변수이름을 profile.jsp의 name값과 일치시킨다
+    public ResponseEntity<?> profileImageUrlUpdate(@PathVariable int principalId, MultipartFile profileImageFile,
+                                                   @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        User userEntity = userService.profileImageUpdate(principalId, profileImageFile);
+        principalDetails.setUser(userEntity); // 세션 변경
+        return new ResponseEntity<>(new CMRespDto<>(1, "프로필사진변경 성공", null), HttpStatus.OK);
+    }
 
     @GetMapping("/api/user/{pageUserId}/subscribe") //{pageUserId}는 내가 현재 이동한 그 페이지 주인이 구독하고 있는 모든 정보
     public ResponseEntity<?> subscribeList(@PathVariable int pageUserId, @AuthenticationPrincipal PrincipalDetails principalDetails) {

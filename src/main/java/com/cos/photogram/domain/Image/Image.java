@@ -1,5 +1,6 @@
 package com.cos.photogram.domain.Image;
 
+import com.cos.photogram.domain.comment.Comment;
 import com.cos.photogram.domain.likes.Likes;
 import com.cos.photogram.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,6 +37,12 @@ public class Image { // N, 1
     private List<Likes> likes;
 
     private LocalDateTime createDate; //db에는 항상 시간이 들어가야한다.
+
+    //댓글 양방향 매핑, 무한참조 방지
+    @OrderBy("id DESC")
+    @JsonIgnoreProperties({"image"})
+    @OneToMany(mappedBy = "image") //comments의 폴인키의 자바변수를 적어준다.
+    private List<Comment> comments;
 
     @Transient //DB에 컬럼이 만들어지지 않는다
     private boolean likeState;
