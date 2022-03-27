@@ -7,6 +7,10 @@
  (5) 댓글삭제
  */
 
+// (0) 현재 로그인한 사용자 아이디
+let principalId = $("#principalId").val();
+//alert(principalId);
+
 // (1) 스토리 로드하기
 let page = 0;
 
@@ -65,22 +69,22 @@ function getStoryItem(image) {
 
      <div id="storyCommentList-${image.id}">`;
 
-            image.comments.forEach((comment)=>{
-              item +=`<div class="sl__item__contents__comment" id="storyCommentItem-${comment.id}">
+    image.comments.forEach((comment) => {
+        item += `<div class="sl__item__contents__comment" id="storyCommentItem-${comment.id}">
 				<p>
-					<b>${comment.user.username} :</b> ${comment.content}
+					<b>${comment.user.username} </b> ${comment.content}
 				</p>`;
 
-                 if(principalId == comment.user.id){
-                   item += `	<button onclick="deleteComment(${comment.id})">
+        if (principalId == comment.user.id) {
+            item += `	<button onclick="deleteComment(${comment.id})">
 										<i class="fas fa-times"></i>
 									</button>`;
-                 }
-                 item += `	
+        }
+        item += `	
 		    	</div>`;
 
-                 });
-        item += `
+    });
+    item += `
 		</div>
 
 		<div class="sl__item__input">
@@ -114,52 +118,49 @@ $(window).scroll(() => {
 // (3) 좋아요, 안좋아요 far:빈 하트, fas:빨간하트
 function toggleLike(imageId) {
     let likeIcon = $(`
-        #storyLikeIcon -${imageId}`);
+    #storyLikeIcon -${imageId}`);
 
 
     if (likeIcon.hasClass("far")) { //좋아요 하겠다
         $.ajax({
             type: "post",
             url: ` / api / image /${imageId}/likes`,
-        dataType: "json"
-    }).done(res => {
+            dataType: "json"
+        }).done(res => {
 
-        let likeCountStr = $(`#storyLikeCount-${imageId}`).text(); //해당 id에 접근해서 내부에 있는 text를 가져온다
-        let likeCount = Number(likeCountStr) + 1; //좋아요할때 1 증가
-        console.log("좋아요 카운트 증가", likeCount);
-        $(`#storyLikeCount-${imageId}`).text(likeCount);
+            let likeCountStr = $(`#storyLikeCount-${imageId}`).text(); //해당 id에 접근해서 내부에 있는 text를 가져온다
+            let likeCount = Number(likeCountStr) + 1; //좋아요할때 1 증가
+            console.log("좋아요 카운트 증가", likeCount);
+            $(`#storyLikeCount-${imageId}`).text(likeCount);
 
-        likeIcon.addClass("fas");
-        likeIcon.addClass("active");
-        likeIcon.removeClass("far");
-    }).fail(error => {
-        console.log("오류", error);
-    });
+            likeIcon.addClass("fas");
+            likeIcon.addClass("active");
+            likeIcon.removeClass("far");
+        }).fail(error => {
+            console.log("오류", error);
+        });
 
-}
+    } else { //좋아요 취소하겠다
 
-else
-{ //좋아요 취소하겠다
+        $.ajax({
+            type: "delete",
+            url: `/api/image/${imageId}/likes`,
+            dataType: "json"
+        }).done(res => {
 
-    $.ajax({
-        type: "delete",
-        url: `/api/image/${imageId}/likes`,
-        dataType: "json"
-    }).done(res => {
+            let likeCountStr = $(`#storyLikeCount-${imageId}`).text(); //해당 id에 접근해서 내부에 있는 text를 가져온다
+            let likeCount = Number(likeCountStr) - 1; //좋아요 취소
+            console.log("좋아요 카운트 증가", likeCount);
+            $(`#storyLikeCount-${imageId}`).text(likeCount);
 
-        let likeCountStr = $(`#storyLikeCount-${imageId}`).text(); //해당 id에 접근해서 내부에 있는 text를 가져온다
-        let likeCount = Number(likeCountStr) - 1; //좋아요 취소
-        console.log("좋아요 카운트 증가", likeCount);
-        $(`#storyLikeCount-${imageId}`).text(likeCount);
+            likeIcon.removeClass("fas");
+            likeIcon.removeClass("active");
+            likeIcon.addClass("far");
+        }).fail(error => {
+            console.log("오류", error);
+        });
 
-        likeIcon.removeClass("fas");
-        likeIcon.removeClass("active");
-        likeIcon.addClass("far");
-    }).fail(error => {
-        console.log("오류", error);
-    });
-
-}
+    }
 }
 
 // (4) 댓글쓰기
@@ -197,7 +198,7 @@ function addComment(imageId) {
 			      <b>${comment.user.username} </b>
 			      ${comment.content}
 			    </p>
-			    <button><i class="fas fa-times"></i></button>
+			    <button onclick="deleteComment(${comment.id})"><i class="fas fa-times"></i></button>
 			  </div>
 	        `;
 
@@ -211,7 +212,17 @@ function addComment(imageId) {
 }
 
 // (5) 댓글 삭제
-function deleteComment() {
+function deleteComment(commentId) {
+    $.ajax({
+        type: "delete",
+        url: `/api/comment/${commentId}`,
+        dataType: "json"
+    }).done(res => {
+        console.log("성공", res);
+        $(`#storyCommentItem-${commentId}`).remove();
+    }).fail(error => {
+        console.log("오류", error);
+    });
 
 }
 
