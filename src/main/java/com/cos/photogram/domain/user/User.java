@@ -55,4 +55,21 @@ public class User {
         this.createDate = LocalDateTime.now();
     }
 
+    @Override //aop시 무한참조 막기위해 Images 제외한 toString 생성
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", website='" + website + '\'' +
+                ", bio='" + bio + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", gender='" + gender + '\'' +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", role='" + role + '\'' +
+                ", createDate=" + createDate +
+                '}';
+    }
 }

@@ -40,22 +40,12 @@ public class AuthController {
     //원래는 String 타입 리턴+Controller이기 때문에 파일을 리턴하지만, 리턴타입 앞에 @ResponseBody라고 적어주면 Controller긴 한데 data를 리턴한다.
     @PostMapping("/auth/signup")
     public String signup(@Valid SignupDto signupDto, BindingResult bindingResult) { //key=value (x-www-form-urlencoded)
+        //User에 signupDto를 넣을 예정
+        User user = signupDto.toEntity();
+        User userEntity = authService.signup(user);
 
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errorMap.put(error.getField(), error.getDefaultMessage());
-                System.out.println(error.getDefaultMessage());
-            }
-            throw new CustomValidationException("유효성 검사 실패", errorMap); //error가 있으면 강제로 runtimeexeption을 발동시킨다. handler로 연결
-        } else {
-            //User에 signupDto를 넣을 예정
-            User user = signupDto.toEntity();
-            User userEntity = authService.signup(user);
-            System.out.println(userEntity);
-            return "/auth/signin";
-        }
-
+        // System.out.println(userEntity);
+        return "/auth/signin";
     }
+
 }
